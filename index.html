@@ -3,246 +3,146 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Crop Weather Modeling: how weather grows a crop</title>
-<meta name="description" content="Interactive guide to crop weather modeling for Agricultural Meteorology and Climatology, University of Cape Coast.">
+<title>Watch weather grow a maize crop</title>
+<meta name="description" content="A visual crop weather model: pick a place and a season, press play and watch real Ghana weather grow, stress and ripen a maize field.">
 <meta name="theme-color" content="#f6f1e7">
 <link rel="icon" href="data:,">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<a class="skip" href="#main">Skip to content</a>
-<header class="mast">
-  <div class="wrap">
-    <p class="kicker">Agricultural Meteorology and Climatology, University of Cape Coast</p>
-    <h1>How weather grows a crop</h1>
-    <p class="stand">A working crop weather model on five years of real Ghana weather, followed by the lecture ideas behind it.</p>
-  </div>
-  <nav aria-label="Sections"><div class="wrap">
-    <a href="#sim">Model</a><a href="#what">Crop model</a><a href="#growth">Growth and development</a><a href="#yield">Yield</a><a href="#dtt">Thermal time</a><a href="#light">Day length and light</a><a href="#info">Five requirements</a><a href="#types">Model types</a><a href="#quiz">Quiz</a><a href="#glossary">Glossary</a><a href="#about">Sources</a>
-  </div></nav>
+<a class="skip" href="#play">Skip to the simulation</a>
+<header class="mast wrap">
+  <p class="kicker">Crop weather modeling, Agricultural Meteorology and Climatology, University of Cape Coast</p>
+  <h1>Watch weather grow a maize crop</h1>
+  <p class="stand">Pick a place and a season, press play, and see each day of real weather speed up, slow down or stress the crop.</p>
 </header>
-<main id="main">
-<section id="sim" class="hero" aria-labelledby="simTitle">
- <div class="wrap">
-  <div class="hero-head">
-    <h2 id="simTitle">The season, day by day</h2>
-    <p class="demo"><strong>Teaching model.</strong> Simplified from DSSAT CERES-Maize, AquaCrop, APSIM, WOFOST and the FAO-56 water balance. It shows how weather drives a crop; it does not predict a real field.</p>
-  </div>
-  <div class="hero-grid">
-   <div class="hero-main">
-    <div class="stagebar" id="stageBar" aria-hidden="true"></div>
-    <figure class="hero-fig"><svg id="cGrow" viewBox="0 0 600 260" role="img" aria-label="Thermal time and biomass chart"></svg><figcaption><span class="key k-tt"></span>Development: thermal time as percent of what the crop needs to mature. <span class="key k-bio"></span>Growth: above-ground biomass, tonnes per hectare (right axis). Dotted line: flowering.</figcaption></figure>
-    <div class="dash">
-    <div class="tile"><span>Day after sowing</span><strong id="kDay">0</strong><small id="kDate"></small></div>
-    <div class="tile"><span>Stage</span><strong id="kStage">Not started</strong></div>
-    <div class="tile"><span>Thermal time</span><strong id="kTT">0</strong><small>&deg;C days</small></div>
-    <div class="tile"><span>Leaf Area Index (LAI)</span><strong id="kLAI">0</strong></div>
-    <div class="tile"><span>Biomass</span><strong id="kBio">0</strong><small>tonnes per hectare</small></div>
-    <div class="tile"><span>Soil water</span><strong id="kSoil">0</strong><small>percent of available water</small></div>
-    <div class="tile"><span>Today's weather</span><strong id="kWx">-</strong><small id="kWx2"></small></div>
-    <div class="tile"><span>Stress</span><strong id="kStress">None</strong></div>
-  </div>
-   </div>
-   <aside class="hero-side" aria-label="Simulation settings">
-    <form class="calc" id="simForm" onsubmit="return false">
-    <div class="row3">
-      <div><label for="sLoc">Location</label><select id="sLoc">
-        <option value="capecoast">Cape Coast, coast (two rainy seasons)</option>
-        <option value="tamale">Tamale, north (one rainy season)</option></select></div>
-      <div><label for="sCrop">Crop</label><select id="sCrop">
-        <option value="maize">Maize</option><option value="rice">Rice (upland, rainfed)</option><option value="cassava">Cassava</option></select></div>
-      <div><label for="sYear">Weather year (NASA POWER)</label><select id="sYear"></select></div>
-      <div><label for="sDate">Planting date</label><select id="sDate"></select></div>
-      <div><label for="sScen">Scenario</label><select id="sScen">
-        <option value="normal">Normal (real weather)</option>
-        <option value="drought">Drought with dry spell</option>
-        <option value="heat">Heat wave at flowering</option>
-        <option value="elnino">El Ni&ntilde;o style year</option>
-        <option value="lanina">La Ni&ntilde;a style year</option>
-        <option value="late">Late planting (30 days later)</option></select></div>
-      <div><label for="sSpeed">Animation speed</label><select id="sSpeed">
-        <option value="120">Slow</option><option value="45" selected>Normal</option><option value="12">Fast</option></select></div>
+
+<main id="main" class="wrap">
+  <form id="controls" class="controls" onsubmit="return false" aria-label="Simulation settings">
+    <div class="field">
+      <label for="loc">Location</label>
+      <select id="loc">
+        <option value="tamale" selected>Tamale, Northern Region (one rainy season, planted 1 June)</option>
+        <option value="capecoast">Cape Coast, Central Region (major season, planted 1 April)</option>
+      </select>
     </div>
-    <p class="note scen-note">Scenarios edit the real year: drought halves rain and adds a 30 day dry spell near flowering; heat wave adds 6 &deg;C to daytime highs for 3 weeks near flowering; El Ni&ntilde;o style is 25 percent drier and about 0.8 &deg;C warmer; La Ni&ntilde;a style is 20 percent wetter and slightly cooler.</p>
-    <div class="btns"><button type="button" id="sRun" class="primary">Run the season</button><button type="button" id="sPause" disabled>Pause</button><button type="button" id="sEnd">Skip to harvest</button></div>
-  </form>
-    <div id="sResult" class="result" aria-live="polite"><p>Pick a place, crop, year and scenario, then run the season.</p></div>
-   </aside>
-  </div>
-  <div class="two-figs">
-    <figure><svg id="cWx" viewBox="0 0 600 220" role="img" aria-label="Daily rainfall and temperature chart"></svg><figcaption><span class="key k-rain"></span>Daily rain, millimetres (right axis). <span class="key k-tmax"></span>Maximum and <span class="key k-tmin"></span>minimum temperature, &deg;C.</figcaption></figure>
-    <figure><svg id="cWater" viewBox="0 0 600 220" role="img" aria-label="Soil water and stress chart"></svg><figcaption><span class="key k-soil"></span>Soil water, percent of available water. <span class="key k-stress"></span>Growth lost to water or heat stress that day, percent.</figcaption></figure>
-  </div>
-  <details><summary>Compare all scenarios for these choices</summary><div id="sCompare"></div></details>
-  <details><summary>How this model works (each day)</summary>
-  <ol class="steps">
-    <li><strong>Development:</strong> DTT = mean temperature minus base temperature (maize 8 &deg;C, rice 10 &deg;C, cassava 13 &deg;C), with no extra credit above an optimum temperature and zero at a high cut-off. Stages begin when thermal time reaches set totals.</li>
-    <li><strong>Light:</strong> PAR = 0.5 &times; solar radiation. Leaves intercept PAR &times; (1 &minus; e<sup>&minus;k &times; LAI</sup>), where k is the light extinction coefficient (Beer's law).</li>
-    <li><strong>Growth:</strong> new biomass = Radiation Use Efficiency (RUE) &times; intercepted PAR &times; stress factor.</li>
-    <li><strong>Water:</strong> reference evapotranspiration (ETo) from the Hargreaves equation; crop water use = crop coefficient (Kc) &times; ETo &times; water stress coefficient (Ks). Rain fills the soil "bucket"; extra water drains away.</li>
-    <li><strong>Stress:</strong> Ks falls below 1 when the soil has lost more than 55 percent of its available water. Heat above 35 &deg;C also slows growth.</li>
-    <li><strong>Yield:</strong> final biomass &times; Harvest Index (HI). Water or heat stress during flowering lowers the HI.</li>
-  </ol></details>
- </div>
-</section>
-
-<section id="what" class="sec"><div class="wrap">
-  <p class="num">Part 1 of 9</p><h2>What is a crop model?</h2>
-  <p class="big">A <strong>crop model</strong> is a representation of a crop through mathematical equations that explain how the crop interacts with its environment, both <strong>above ground</strong> (air temperature, sunlight, day length, rain) and <strong>below ground</strong> (soil water, nutrients).</p>
-  <div class="flow" aria-label="How a crop model works">
-    <div><span>Inputs</span>Weather, soil, crop variety, management</div>
-    <div aria-hidden="true" class="arrow">&rarr;</div>
-    <div><span>Model</span>Equations for growth and development</div>
-    <div aria-hidden="true" class="arrow">&rarr;</div>
-    <div><span>Outputs</span>Dates of flowering and maturity, dry matter, yield</div>
-  </div>
-  <p>Give a crop model a season of weather and it tells you when the crop will flower and mature, and roughly how much it will yield. The model at the top of this page is a small working example.</p>
-</div></section>
-
-<section id="growth" class="sec"><div class="wrap">
-  <p class="num">Part 2 of 9</p><h2>Growth versus development</h2>
-  <div class="two">
-    <div class="box"><h3>Growth</h3><p>The <strong>increase in dry matter</strong> (the weight of the plant once water is removed). It depends on how fast leaves intercept sunlight and how fast roots capture water and nutrients.</p><p class="ask">Question it answers: <em>How big and heavy is the crop?</em></p></div>
-    <div class="box"><h3>Development</h3><p>The <strong>progress through life stages</strong>, called <strong>phenophases</strong>, from sowing to maturity. It is mostly driven by temperature, and for some stages by day length.</p><p class="ask">Question it answers: <em>Which stage is the crop at?</em></p></div>
-  </div>
-  <h3>Maize phenophases</h3>
-  <p class="note">Typical values for a medium maturity variety in Ghana. Varieties differ.</p>
-  <div class="stages" role="group" aria-label="Maize phenophases">
-    <button type="button" data-i="0">Sowing</button><button type="button" data-i="1">Emergence</button><button type="button" data-i="2">Vegetative</button><button type="button" data-i="3">Tasselling and silking</button><button type="button" data-i="4">Grain filling</button><button type="button" data-i="5">Physiological maturity</button>
-  </div>
-  <div id="stageInfo" class="stageinfo" aria-live="polite">Select a stage to read what happens.</div>
-</div></section>
-
-<section id="yield" class="sec"><div class="wrap">
-  <p class="num">Part 3 of 9</p><h2>Yield in three parts</h2>
-  <p class="formula">Yield = Length of Growing Period (LGP) &times; Mean rate of dry matter accumulation &times; Harvest Index (HI)</p>
-  <p>The <strong>Harvest Index (HI)</strong> is the fraction of total dry matter that we actually harvest (for maize, the grain). Without stress, HI stays fairly steady from year to year for a given variety.</p>
-  <form class="calc" onsubmit="return false">
-    <label for="lgp">Length of Growing Period (LGP): <output id="lgpOut">110</output> days</label>
-    <input type="range" id="lgp" min="60" max="180" value="110">
-    <label for="rate">Mean rate of dry matter accumulation: <output id="rateOut">15</output> grams per square metre per day</label>
-    <input type="range" id="rate" min="2" max="30" value="15">
-    <label for="hi">Harvest Index (HI): <output id="hiOut">0.45</output></label>
-    <input type="range" id="hi" min="0.10" max="0.60" step="0.01" value="0.45">
-  </form>
-  <div class="result" aria-live="polite">
-    <p>Total dry matter: <strong id="bio"></strong></p>
-    <p>Yield: <strong id="yld"></strong></p>
-    <div class="bar" aria-hidden="true"><div id="barGrain"></div></div>
-    <p class="note">Bar: green part is the harvested share (HI) of total dry matter. 100 grams per square metre equals 1 tonne per hectare.</p>
-  </div>
-  <div class="presets"><span>Presets</span>
-    <button type="button" data-p="110,15,0.45">Good season maize</button>
-    <button type="button" data-p="110,8,0.30">Drought stressed maize</button>
-    <button type="button" data-p="90,12,0.45">Early maturing maize</button>
-  </div>
-  <p class="note">Typical values only. Average maize yields on Ghanaian farms are often about 1.5 to 2.5 tonnes per hectare, while well managed research plots can exceed 5.</p>
-</div></section>
-
-<section id="dtt" class="sec"><div class="wrap">
-  <p class="num">Part 4 of 9</p><h2>Daily Thermal Time (DTT) calculator</h2>
-  <p>Crops develop faster when it is warmer. Below a <strong>base temperature (Tbase)</strong> development stops. Daily Thermal Time (DTT), also called growing degree days, measures the useful heat a crop gets each day.</p>
-  <p class="formula">DTT = ((Tmax + Tmin) / 2) &minus; Tbase, and DTT = 0 if the answer is negative</p>
-  <p class="note gentle">Note: the lecture notes print this formula on two lines, which can look like only Tbase is divided by 2. The standard form is shown above: first average the maximum and minimum temperatures, then subtract the base temperature. DTT is the heat <em>above</em> the base, not the mean daily temperature itself.</p>
-  <form class="calc" id="dttForm" onsubmit="return false">
-    <div class="row3">
-      <div><label for="crop">Crop (typical values)</label><select id="crop"></select></div>
-      <div><label for="tmax">Maximum temperature (Tmax), &deg;C</label><input type="number" id="tmax" value="32" step="0.1" inputmode="decimal"></div>
-      <div><label for="tmin">Minimum temperature (Tmin), &deg;C</label><input type="number" id="tmin" value="22" step="0.1" inputmode="decimal"></div>
-      <div><label for="tbase">Base temperature (Tbase), &deg;C</label><input type="number" id="tbase" value="10" step="0.1" inputmode="decimal"></div>
-      <div><label for="target">Thermal time needed for the stage, &deg;C days</label><input type="number" id="target" value="750" step="10" inputmode="numeric"></div>
-      <div><label for="vary">Day to day weather</label><select id="vary"><option value="0">Same every day</option><option value="1">Realistic variation</option></select></div>
+    <fieldset class="field">
+      <legend>Season</legend>
+      <div class="seg" id="scen">
+        <label><input type="radio" name="scen" value="normal" checked><span>Normal</span></label>
+        <label><input type="radio" name="scen" value="drought"><span>Drought</span></label>
+        <label><input type="radio" name="scen" value="heat"><span>Heat wave</span></label>
+        <label><input type="radio" name="scen" value="elnino"><span>El Ni&ntilde;o style</span></label>
+        <label><input type="radio" name="scen" value="late"><span>Late planting</span></label>
+      </div>
+      <p class="hint" id="scenHint"></p>
+    </fieldset>
+    <div class="actions">
+      <button type="button" id="play" class="primary">Play the season</button>
+      <button type="button" id="pause" disabled>Pause</button>
+      <button type="button" id="skip">Jump to harvest</button>
+      <label class="speed"><span>Speed</span>
+        <select id="speed" aria-label="Animation speed"><option value="220">Slow</option><option value="110" selected>Normal</option><option value="40">Fast</option></select>
+      </label>
     </div>
   </form>
-  <div class="result" aria-live="polite"><p id="dttWork"></p><p id="dttDays" class="big"></p></div>
-  <figure>
-    <svg id="chart" viewBox="0 0 600 300" role="img" aria-labelledby="chartTitle"><title id="chartTitle">Accumulated thermal time over days</title></svg>
-    <figcaption>Accumulated thermal time (line) rising day by day until it reaches the stage target (dashed line).</figcaption>
-  </figure>
-  <p class="note">Try this: set Tmin to 18 and Tmax to 26 (a cool highland night like Kwahu) and see how many more days the crop needs than at 32 and 22 in Tamale.</p>
-</div></section>
 
-<section id="light" class="sec"><div class="wrap">
-  <p class="num">Part 5 of 9</p><h2>Day length (photoperiod) and Photosynthetically Active Radiation (PAR)</h2>
-  <div class="two">
-    <div class="box"><h3>Day length (photoperiod)</h3>
-      <p>Some stages, especially <strong>flowering</strong>, respond to how long the day is. Short day crops such as many sorghum, rice and soybean varieties flower sooner when days get shorter.</p>
-      <label for="lat">Latitude: <output id="latOut">5.1</output>&deg; N</label>
-      <input type="range" id="lat" min="0" max="60" step="0.1" value="5.1">
-      <label for="doy">Day of year: <output id="doyOut">172</output></label>
-      <input type="range" id="doy" min="1" max="365" value="172">
-      <p aria-live="polite">Day length: <strong id="dl"></strong></p>
-      <p class="note">Cape Coast is near 5.1&deg; N, so day length only changes by about half an hour across the year. Tamale is near 9.4&deg; N. Move the latitude to 50&deg; to see how much bigger the change is in Europe.</p>
+  <section class="stage" aria-labelledby="sceneTitle">
+    <h2 id="sceneTitle" class="sr">Field scene</h2>
+    <div class="scene-wrap">
+      <svg id="scene" viewBox="0 0 400 260" role="img" aria-labelledby="sceneDesc">
+        <desc id="sceneDesc">An animated maize field under the day's weather.</desc>
+      </svg>
+      <div class="daytag" aria-hidden="true"><strong id="dDay">Day 0</strong><span id="dDate"></span></div>
+      <div class="toast" id="toast" aria-hidden="true"></div>
     </div>
-    <div class="box"><h3>Photosynthetically Active Radiation (PAR)</h3>
-      <p>Only part of sunlight drives photosynthesis: light between 400 and 700 nanometres. This is PAR, and it is roughly <strong>half (about 45 to 50 percent)</strong> of total solar radiation.</p>
-      <label for="srad">Total solar radiation: <output id="sradOut">18</output> megajoules per square metre per day</label>
-      <input type="range" id="srad" min="5" max="30" value="18">
-      <label for="lai">Fraction of PAR intercepted by leaves: <output id="intOut">0.80</output></label>
-      <input type="range" id="lai" min="0" max="1" step="0.05" value="0.8">
-      <label for="rue">Radiation Use Efficiency (RUE): <output id="rueOut">3.0</output> grams per megajoule of PAR intercepted</label>
-      <input type="range" id="rue" min="1" max="4" step="0.1" value="3">
-      <p aria-live="polite">PAR: <strong id="par"></strong><br>Daily dry matter growth: <strong id="dm"></strong></p>
-      <p class="note">Typical values. RUE of about 3 to 3.5 grams per megajoule is common for maize, a C4 crop. This links PAR to the "mean rate of dry matter accumulation" in the yield formula.</p>
+    <p id="status" class="status" aria-live="polite">Press play to start the season.</p>
+
+    <div class="dtt">
+      <div class="dtt-head">
+        <span>Daily Thermal Time (DTT), the heat the crop can use</span>
+        <strong><span id="ttTotal">0</span> of <span id="ttNeed">1790</span> &deg;C days</strong>
+      </div>
+      <div class="dtt-bar" id="ttBar"><div id="ttFill"></div></div>
+      <p class="formula" id="ttFormula">Today: DTT = (maximum temperature + minimum temperature) / 2 &minus; base temperature of 10 &deg;C</p>
     </div>
-  </div>
-</div></section>
 
-<section id="info" class="sec"><div class="wrap">
-  <p class="num">Part 6 of 9</p><h2>The five basic information requirements</h2>
-  <p>To build a crop weather model we must first collect:</p>
-  <ol class="info">
-    <li><details><summary>Crop phenology in relation to temperature and day length</summary><p>When does the crop emerge, flower and mature, and how do temperature and day length change those dates? (The lecture spells this "phonology"; the correct term is phenology.)</p></details></li>
-    <li><details><summary>Water use by the crop during different phenophases</summary><p>How much water the crop uses at each stage. Maize needs the most water around tasselling and silking.</p></details></li>
-    <li><details><summary>Relationship between radiation interception, crop water use and total dry matter production</summary><p>How intercepted sunlight and water use turn into plant weight.</p></details></li>
-    <li><details><summary>Partitioning of dry matter into plant parts, as affected by water and nutrients</summary><p>How the dry matter is shared between roots, stems, leaves and grain. Stress usually lowers the share going to grain (the harvest index).</p></details></li>
-    <li><details><summary>Effect of weather on biotic interference to crop growth</summary><p>How weather favours pests, diseases and weeds. For example, warm humid weather can favour fungal diseases, and dry spells have been linked to fall armyworm outbreaks.</p></details></li>
-  </ol>
-  <p class="memory">Memory aid: <strong>P W R P B</strong>, "Plants Want Rain, Plus Balance": Phenology, Water use, Radiation, Partitioning, Biotic.</p>
-</div></section>
+    <div class="read">
+      <div><span>Weather today</span><strong id="rWx">-</strong></div>
+      <div><span>Soil water</span><strong id="rSoil">-</strong><i class="meter"><b id="mSoil"></b></i></div>
+      <div><span>Crop stress</span><strong id="rStress">-</strong><i class="meter warn"><b id="mStress"></b></i></div>
+      <div><span>Dry matter (biomass)</span><strong id="rBio">-</strong></div>
+    </div>
 
-<section id="types" class="sec"><div class="wrap">
-  <p class="num">Part 7 of 9</p><h2>Types of models</h2>
-  <p>The lecture lists nine types. Most come in opposing pairs, so read them two at a time.</p>
-  <div id="typesList"></div>
-</div></section>
+    <figure class="strip">
+      <svg id="strip" viewBox="0 0 400 90" role="img" aria-label="Daily weather strip for the season so far"></svg>
+      <figcaption><i class="k k-rain"></i>Rain each day <i class="k k-hot"></i>Days above 35 &deg;C <i class="k k-dry"></i>Days the crop was water stressed</figcaption>
+    </figure>
+  </section>
 
-<section id="quiz" class="sec"><div class="wrap">
-  <p class="num">Part 8 of 9</p><h2>Which model type is it?</h2>
-  <div id="quizBox" aria-live="polite"></div>
-</div></section>
+  <section id="result" class="result" aria-live="polite" hidden>
+    <h2>Harvest</h2>
+    <p id="resText"></p>
+    <div class="compare" id="compare"></div>
+    <p class="note">Teaching model: it ignores nutrients, pests and weeds, so yields are closer to a well managed field than to an average farm.</p>
+  </section>
 
-<section id="glossary" class="sec"><div class="wrap">
-  <p class="num">Part 9 of 9</p><h2>Glossary</h2>
-  <label for="gsearch">Search terms</label>
-  <input type="search" id="gsearch" placeholder="For example: harvest">
-  <dl id="glist"></dl>
-</div></section>
 
-<section id="about" class="sec"><div class="wrap">
-  <h2>Sources and limits</h2>
-  <p>This site was made for an Agricultural Meteorology and Climatology group presentation (crop weather modeling) at the University of Cape Coast. The simulator is a <strong>teaching demonstration</strong>, kept simple on purpose. It ignores nutrients, pests, weeds and many details that real models include, so its yields are closer to what good management could reach than to average farm yields.</p>
-  <h3>Weather data</h3>
-  <p>Daily maximum and minimum temperature, rainfall (corrected precipitation) and solar radiation for 2020 to 2024 come from the NASA Prediction Of Worldwide Energy Resources (POWER) project, Agroclimatology community, for points near Cape Coast (5.10&deg; N, 1.25&deg; W) and Tamale (9.40&deg; N, 0.85&deg; W). POWER data are satellite and model based on a grid of about 50 kilometres, so they can differ from Ghana Meteorological Agency (GMet) station records. For example, the coastal grid cell for Cape Coast shows more rain than the Cape Coast station usually records. Scenarios change the real data in simple ways (see the scenario list).</p>
-  <h3>Main sources</h3>
-  <ul class="refs">
-    <li>NASA POWER Project. Daily point data API, power.larc.nasa.gov. Data accessed 17 October 2026.</li>
-    <li>Kiniry, J.R. and Bonhomme, R. Predicting maize phenology. In: Hodges, T. (ed.) Predicting Crop Phenology, CRC Press (1991). (Base 8 &deg;C, optimum 34 &deg;C, cut-off 44 &deg;C.)</li>
-    <li>Simulating maize crop processes in DSSAT. In: Methods of Introducing System Models into Agricultural Research, ASA, CSSA and SSSA (2011), doi:10.1002/9780891183860.ch9. (CERES-Maize phases and DTT.)</li>
-    <li>Allen, R.G., Pereira, L.S., Raes, D. and Smith, M. (1998). Crop evapotranspiration. FAO Irrigation and Drainage Paper 56 (FAO-56). Hargreaves equation, crop coefficients (maize Kc 0.3, 1.2, 0.6), water stress coefficient Ks.</li>
-    <li>Raes, D., Steduto, P., Hsiao, T.C. and Fereres, E. AquaCrop Reference Manual (FAO). Maize base temperature 8 &deg;C, reference harvest index 48 to 52 percent.</li>
-    <li>Lindquist, J.L. and others (2005). Maize radiation use efficiency under optimal growth conditions. Agronomy Journal 97, 72 to 78. (RUE about 3.8 grams per megajoule under ideal conditions.)</li>
-    <li>APSIM Maize documentation, apsim.info, and WOFOST documentation (Wageningen University), for the light interception and daily growth approach.</li>
-    <li>Lecture notes: Agricultural Meteorology and Climatology, crop weather modeling section.</li>
-  </ul>
-  <p class="note">A longer research summary is kept with the project files (RESEARCH.md).</p>
-</div></section>
+  <section class="calc" aria-labelledby="calcTitle">
+    <h2 id="calcTitle">Daily Thermal Time (DTT) calculator</h2>
+    <p class="formula-big">DTT = ((maximum temperature + minimum temperature) / 2) &minus; base temperature, and 0 if negative</p>
+    <form class="calc-row" onsubmit="return false">
+      <div><label for="cTmax">Maximum temperature (Tmax), &deg;C</label><input id="cTmax" type="number" inputmode="decimal" step="0.1" value="32"></div>
+      <div><label for="cTmin">Minimum temperature (Tmin), &deg;C</label><input id="cTmin" type="number" inputmode="decimal" step="0.1" value="22"></div>
+      <div><label for="cTb">Base temperature (Tbase), &deg;C</label><input id="cTb" type="number" inputmode="decimal" step="0.1" value="10"></div>
+    </form>
+    <p class="calc-out" id="cOut" aria-live="polite"></p>
+    <p class="note">The lecture prints this formula over two lines; the standard form averages the two temperatures first, then subtracts the base. Maize base temperature is typically about 10 &deg;C.</p>
+  </section>
+
+  <section class="more">
+    <details>
+      <summary>How the model works, in five steps</summary>
+      <ol>
+        <li><strong>Development:</strong> each day adds Daily Thermal Time (DTT) = mean temperature minus a base of 10 &deg;C, with no extra benefit above 34 &deg;C. Stages start at set totals: emergence 70, end of juvenile stage 270, flowering 980, grain filling 1120, maturity 1790 &deg;C days.</li>
+        <li><strong>Light:</strong> leaves catch Photosynthetically Active Radiation (PAR), about half of sunlight. More leaf area, measured as Leaf Area Index (LAI), catches more.</li>
+        <li><strong>Growth:</strong> new dry matter = Radiation Use Efficiency (RUE) &times; light caught &times; stress factor.</li>
+        <li><strong>Water:</strong> rain fills the soil; the crop uses water at a rate set by the weather (Hargreaves reference evapotranspiration) and its crop coefficient. When the soil loses more than 55 percent of its available water, growth slows and leaves roll.</li>
+        <li><strong>Yield:</strong> dry matter &times; Harvest Index (HI). Drought or heat above 35 &deg;C at flowering lowers the Harvest Index (HI).</li>
+      </ol>
+    </details>
+    <details>
+      <summary>Glossary</summary>
+      <dl>
+        <dt>Crop model</dt><dd>Mathematical equations that describe how a crop interacts with the weather above ground and the soil below ground.</dd>
+        <dt>Growth</dt><dd>Increase in dry matter (plant weight with the water removed).</dd>
+        <dt>Development</dt><dd>Progress through life stages (phenophases), such as emergence, flowering and maturity.</dd>
+        <dt>Daily Thermal Time (DTT)</dt><dd>((maximum temperature + minimum temperature) / 2) minus the base temperature, or 0 if negative. Measured in degree Celsius days.</dd>
+        <dt>Base temperature</dt><dd>Temperature below which development stops. Typical for maize: 8 to 10 &deg;C; this page uses 10 &deg;C.</dd>
+        <dt>Leaf Area Index (LAI)</dt><dd>Leaf area over each square metre of ground.</dd>
+        <dt>Photosynthetically Active Radiation (PAR)</dt><dd>The part of sunlight (400 to 700 nanometres) plants use for photosynthesis, about half of the total.</dd>
+        <dt>Harvest Index (HI)</dt><dd>Share of total dry matter that ends up as grain. About 0.48 for maize without stress.</dd>
+        <dt>Yield</dt><dd>Length of growing period &times; mean rate of dry matter accumulation &times; Harvest Index (HI).</dd>
+      </dl>
+    </details>
+    <details>
+      <summary>About and sources</summary>
+      <p>Made for a group presentation on crop weather modeling. The simulator is a simplified teaching model built on ideas from real crop models.</p>
+      <ul>
+        <li>Weather: NASA Prediction Of Worldwide Energy Resources (POWER) daily data for 2021, points near Tamale (9.40&deg; N, 0.85&deg; W) and Cape Coast (5.10&deg; N, 1.25&deg; W). Satellite and model based, so it can differ from Ghana Meteorological Agency (GMet) stations; the Cape Coast grid cell is wetter than the town usually is.</li>
+        <li>Thermal time: Decision Support System for Agrotechnology Transfer (DSSAT) CERES-Maize, optimum 34 &deg;C; this demo uses a maize base of 10 &deg;C to match the course handout, while CERES-Maize itself uses 8 &deg;C (Kiniry and Bonhomme, 1991; DSSAT maize chapter, 2011, doi:10.1002/9780891183860.ch9).</li>
+        <li>Water use and stress: Food and Agriculture Organization (FAO) Irrigation and Drainage Paper 56 (Allen and others, 1998).</li>
+        <li>Harvest Index (HI) and stages: FAO AquaCrop reference manual (maize).</li>
+        <li>Radiation Use Efficiency (RUE): Lindquist and others (2005), Agronomy Journal 97; APSIM and WOFOST model documentation.</li>
+        <li>Scenarios edit the real 2021 weather: drought halves rain and adds a 30 day dry spell near flowering; heat wave adds 6 &deg;C to daily highs for 3 weeks near flowering; El Ni&ntilde;o style is 25 percent drier and slightly warmer; late planting sows 30 days later.</li>
+      </ul>
+    </details>
+  </section>
 </main>
-<footer><div class="wrap"><p>Agricultural Meteorology and Climatology group presentation, University of Cape Coast, October 2026. Values marked typical are for teaching. Works offline after the first visit.</p></div></footer>
+<footer class="wrap"><p>University of Cape Coast, October 2026. Works offline after the first visit.</p></footer>
 <script src="calc.js"></script>
 <script src="data/weather.js"></script>
 <script src="sim.js"></script>
-<script src="simui.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

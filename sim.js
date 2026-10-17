@@ -1,7 +1,7 @@
 // Simplified daily crop weather model for teaching (ideas from CERES-Maize, AquaCrop, APSIM, WOFOST and FAO-56)
 (function (root) {
   var CROPS = {
-    maize: { name: 'Maize', tb: 8, topt: 34, tcut: 44, stages: [['Sowing',0],['Emergence',80],['End of juvenile stage',300],['Flowering (tasselling and silking)',1100],['Grain filling',1250],['Physiological maturity',2000]], flowerWin: [1000, 1300], laiMax: 4.0, k: 0.65, rue: 2.5, hi: 0.48, kc: [0.3, 1.2, 0.6], rootMax: 1.0, maxDays: 180, harvestDays: null, product: 'grain', fresh: 1 / 0.88 },
+    maize: { name: 'Maize', tb: 10, topt: 34, tcut: 44, stages: [['Sowing',0],['Emergence',70],['End of juvenile stage',270],['Flowering (tasselling and silking)',980],['Grain filling',1120],['Physiological maturity',1790]], flowerWin: [890, 1160], laiMax: 4.0, k: 0.65, rue: 2.5, hi: 0.48, kc: [0.3, 1.2, 0.6], rootMax: 1.0, maxDays: 180, harvestDays: null, product: 'grain', fresh: 1 / 0.88 },
     rice: { name: 'Rice (upland)', tb: 10, topt: 33, tcut: 42, stages: [['Sowing',0],['Emergence',90],['Tillering',450],['Flowering (heading)',1350],['Grain filling',1500],['Physiological maturity',2050]], flowerWin: [1250, 1550], laiMax: 4.5, k: 0.5, rue: 2.2, hi: 0.40, kc: [1.05, 1.2, 0.75], rootMax: 0.6, maxDays: 200, harvestDays: null, product: 'grain', fresh: 1 / 0.86 },
     cassava: { name: 'Cassava', tb: 13, topt: 32, tcut: 45, stages: [['Planting',0],['Sprouting',150],['Canopy building',700],['Storage root bulking',1400],['Harvest stage',3000]], flowerWin: null, laiMax: 3.5, k: 0.7, rue: 1.6, hi: 0.60, kc: [0.3, 0.9, 0.6], rootMax: 1.0, maxDays: 330, harvestDays: 300, product: 'storage roots', fresh: 1 / 0.35 }
   };
