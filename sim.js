@@ -5,6 +5,15 @@
     rice: { name: 'Rice (upland)', tb: 10, topt: 33, tcut: 42, stages: [['Sowing',0],['Emergence',90],['Tillering',450],['Flowering (heading)',1350],['Grain filling',1500],['Physiological maturity',2050]], flowerWin: [1250, 1550], laiMax: 4.5, k: 0.5, rue: 2.2, hi: 0.40, kc: [1.05, 1.2, 0.75], rootMax: 0.6, maxDays: 200, harvestDays: null, product: 'grain', fresh: 1 / 0.86 },
     cassava: { name: 'Cassava', tb: 13, topt: 32, tcut: 45, stages: [['Planting',0],['Sprouting',150],['Canopy building',700],['Storage root bulking',1400],['Harvest stage',3000]], flowerWin: null, laiMax: 3.5, k: 0.7, rue: 1.6, hi: 0.60, kc: [0.3, 0.9, 0.6], rootMax: 1.0, maxDays: 330, harvestDays: 300, product: 'storage roots', fresh: 1 / 0.35 }
   };
+  var LATE_DAYS = 60;
+  var SCENARIOS = {
+    normal: 'Real 2021 NASA POWER weather, unchanged: regular rains through the season.',
+    drought: 'Drizzle under 3 mm removed and other rain halved, plus a 30 day rain-free spell from day 45 that covers flowering.',
+    heat: 'Daily highs of at least 37 \u00B0C (6 \u00B0C or more above normal) for 22 days from day 50, with little rain.',
+    elnino: 'An El Ni\u00F1o style year: fewer rainy days, 30 percent less rain, a 2 week dry spell from day 30, about 1 \u00B0C warmer.',
+    late: 'Same real weather, but sown 60 days late, so grain filling runs into the end of the rains.',
+    lanina: 'Wetter (20 percent more rain) and slightly cooler.'
+  };
   function thermal(tmax, tmin, c) {
     var tm = (tmax + tmin) / 2;
     if (tm <= c.tb) return 0;
@@ -46,16 +55,18 @@
     }
     return out.map(function (w, d) {
       var x = { tx: w.tx, tn: w.tn, p: w.p, s: w.s, doy: w.doy, year: w.year };
-      if (scenario === 'drought') { x.p *= 0.5; if (d >= 45 && d < 75) { x.p = 0; x.s *= 1.08; x.tx += 1; } }
-      if (scenario === 'heat') { if (d >= 50 && d < 72) { x.tx += 6; x.tn += 2; } }
-      if (scenario === 'elnino') { x.p *= 0.75; x.tx += 0.8; x.tn += 0.6; }
+      // Scenario edits (see SCENARIOS for the reasoning). NASA POWER gridded rain has light drizzle on most days,
+      // so dry scenarios also remove drizzle below 3 mm to create real dry days.
+      if (scenario === 'drought') { x.p = x.p < 3 ? 0 : x.p * 0.5; if (d >= 45 && d < 75) { x.p = 0; x.s *= 1.08; x.tx += 1.5; } }
+      if (scenario === 'heat') { if (d >= 50 && d < 72) { x.tx = Math.max(x.tx + 6, 37 + (d % 3)); x.tn += 2; x.p *= 0.3; x.s *= 1.1; } }
+      if (scenario === 'elnino') { x.p = x.p < 3 ? 0 : x.p * 0.7; if (d >= 30 && d < 44) x.p = 0; x.tx += 1.0; x.tn += 0.6; x.s *= 1.04; }
       if (scenario === 'lanina') { x.p *= 1.2; x.tx -= 0.3; x.s *= 0.97; }
       return x;
     });
   }
   function simulate(opt) {
     var c = CROPS[opt.crop], lat = opt.lat, taw0 = opt.awc || 120;
-    var w = buildWeather(opt.years, opt.year, opt.doy, c.maxDays, opt.scenario);
+    var late = opt.scenario === 'late', w = buildWeather(opt.years, opt.year, opt.doy + (late ? LATE_DAYS : 0), c.maxDays, late ? 'normal' : opt.scenario);
     var tt = 0, lai = 0, bio = 0, rootZ = 0.3, dr = taw0 * rootZ * 0.4, hiF = 1, days = [], done = false, mat = c.stages[c.stages.length - 1][1];
     for (var d = 0; d < w.length && !done; d++) {
       var x = w[d], dtt = thermal(x.tx, x.tn, c);
@@ -76,7 +87,7 @@
       bio += growth;
       if (c.flowerWin && tt >= c.flowerWin[0] && tt <= c.flowerWin[1]) {
         hiF -= (1 - k) * 0.03;
-        if (x.tx > 35) hiF -= (x.tx - 35) * 0.02;
+        if (x.tx > 35) hiF -= (x.tx - 35) * 0.012;
         hiF = Math.max(0.1, hiF);
       }
       days.push({ day: d + 1, year: x.year, doy: x.doy, tmax: x.tx, tmin: x.tn, rain: x.p, srad: x.s, dtt: dtt, tt: tt, stage: st, lai: lai, par: par, ipar: ipar, growth: growth, biomass: bio, et0: e0, kc: kc, etc: etc, ks: k, heat: heat, stress: 1 - Math.min(k, heat), soilPct: 100 * (1 - dr / taw), drain: drain, hiF: hiF });
@@ -86,6 +97,6 @@
     return { crop: c, days: days, matured: done, biomass: bio, hiFactor: hiF, hi: c.hi * hiF, yieldDryT: yieldDry / 100, yieldFreshT: yieldDry / 100 * c.fresh,
       rain: days.reduce(function (a, b) { return a + b.rain; }, 0), etc: days.reduce(function (a, b) { return a + b.etc; }, 0) };
   }
-  var api = { CROPS: CROPS, thermal: thermal, ra: ra, et0Hargreaves: et0Hargreaves, ks: ks, kcAt: kcAt, stageIndex: stageIndex, buildWeather: buildWeather, simulate: simulate };
+  var api = { CROPS: CROPS, SCENARIOS: SCENARIOS, LATE_DAYS: LATE_DAYS, thermal: thermal, ra: ra, et0Hargreaves: et0Hargreaves, ks: ks, kcAt: kcAt, stageIndex: stageIndex, buildWeather: buildWeather, simulate: simulate };
   if (typeof module !== 'undefined') module.exports = api; else root.SIM = api;
 })(this);

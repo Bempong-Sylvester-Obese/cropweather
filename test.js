@@ -28,4 +28,17 @@ t(()=>{const r=run('normal','tamale',9.4,160);a.ok(r.matured);a.ok(r.days.length
 t(()=>a.ok(run('drought','tamale',9.4,160).yieldDryT<run('normal','tamale',9.4,160).yieldDryT));
 t(()=>a.ok(run('heat','tamale',9.4,160).yieldDryT<run('normal','tamale',9.4,160).yieldDryT));
 t(()=>a.ok(run('heat','tamale',9.4,160).days.length<=run('normal','tamale',9.4,160).days.length));
+// Scenarios must really differ: weather series and outputs, for every location
+const SC=['normal','drought','heat','elnino','late'],LOCS={tamale:[9.4,152],capecoast:[5.1,91]};
+const sig=a=>a.map(v=>v.toFixed(2)).join(',');
+for(const l in LOCS){const res={};for(const sc of SC)res[sc]=S.simulate({years:window.WEATHER[l],year:2021,doy:LOCS[l][1],crop:'maize',scenario:sc,lat:LOCS[l][0]});
+ for(let i=0;i<SC.length;i++)for(let j=i+1;j<SC.length;j++){const A=res[SC[i]],B=res[SC[j]];
+  t(()=>a.notStrictEqual(sig(A.days.map(d=>d.rain))+sig(A.days.map(d=>d.tmax)),sig(B.days.map(d=>d.rain))+sig(B.days.map(d=>d.tmax)),l+' '+SC[i]+' vs '+SC[j]+' weather identical'));
+  t(()=>a.notStrictEqual([A.yieldDryT.toFixed(2),A.days.length,Math.round(A.rain)].join(),[B.yieldDryT.toFixed(2),B.days.length,Math.round(B.rain)].join(),l+' '+SC[i]+' vs '+SC[j]+' outputs identical'))}
+ const dry=r=>{let run=0,m=0;r.days.forEach(d=>{if(d.rain<1){run++;m=Math.max(m,run)}else run=0});return m};
+ t(()=>a.ok(dry(res.drought)>=25&&dry(res.drought)>dry(res.normal)+15,l+' drought needs a long dry run'));
+ t(()=>a.ok(res.heat.days.filter(d=>d.tmax>35).length>=res.normal.days.filter(d=>d.tmax>35).length+15,l+' heat wave needs hot days'));
+ t(()=>a.ok(res.elnino.rain<res.normal.rain*0.7&&res.elnino.days.filter(d=>d.rain>=1).length<res.normal.days.filter(d=>d.rain>=1).length,l+' El Nino must be drier with fewer rainy days'));
+ t(()=>a.notStrictEqual(res.late.days[0].doy,res.normal.days[0].doy));
+ t(()=>a.ok(res.drought.yieldDryT<res.normal.yieldDryT&&res.heat.yieldDryT<res.normal.yieldDryT,l+' stress scenarios must yield less'))}
 console.log('All '+n+' tests passed');

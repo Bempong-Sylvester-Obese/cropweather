@@ -38,8 +38,8 @@ button:hover{background:var(--paper-2)}button:active{transform:translateY(1px)}b
 #scene{display:block;width:100%;height:auto}
 .daytag{position:absolute;left:10px;top:8px;background:rgba(255,253,248,.88);border-radius:4px;padding:4px 8px;font-size:.78rem;line-height:1.25}
 .daytag strong{display:block;font-family:var(--serif);font-size:1rem}
-.toast{position:absolute;left:50%;bottom:12px;transform:translate(-50%,8px);background:var(--ink);color:#fff;padding:6px 12px;border-radius:4px;font-size:.86rem;font-weight:600;opacity:0;transition:opacity .25s,transform .25s;white-space:nowrap;max-width:94%;overflow:hidden;text-overflow:ellipsis}
-.toast.on{opacity:1;transform:translate(-50%,0)}
+.toast{position:absolute;right:10px;bottom:10px;transform:translateY(8px);background:var(--ink);color:#fff;padding:6px 12px;border-radius:4px;font-size:.86rem;font-weight:600;opacity:0;transition:opacity .25s,transform .25s;white-space:nowrap;max-width:70%;font-size:.8rem;overflow:hidden;text-overflow:ellipsis}
+.toast.on{opacity:1;transform:none}
 .status{font-family:var(--serif);font-size:1.05rem;margin:var(--s1) 0 var(--s2)}
 .rain line{animation:fall .55s linear infinite}
 @keyframes fall{from{transform:translateY(-12px)}to{transform:translateY(14px)}}
@@ -94,3 +94,28 @@ footer{border-top:1px solid var(--rule);padding:var(--s2) var(--s2) var(--s4);fo
 .calc-row input{font:inherit;width:100%;min-height:44px;padding:8px 10px;background:#fffdf8;border:1px solid #a8977b;border-radius:4px}
 .calc-out{font-family:var(--serif);font-size:1.2rem;margin:var(--s2) 0 var(--s1)}
 .calc-out strong{color:var(--leaf-d)}
+.sum{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 12px;margin-top:10px;border-top:1px solid var(--rule)}
+@media(min-width:620px){.sum{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.sum div{padding:6px 0;border-bottom:1px solid var(--rule)}
+.sum span{display:block;font-size:.72rem;color:var(--ink-2);line-height:1.25}
+.sum strong{font-family:var(--serif);font-size:1.05rem}
+.sum small{display:block;font-size:.72rem;color:var(--ink-2)}
+#scene stop,#scene path,#scene ellipse{transition:stop-color .35s,fill .35s}
+.sun{transition:opacity .35s}
+.drift{animation:drift 26s ease-in-out infinite alternate}.drift.slow{animation-duration:40s}
+@keyframes drift{from{transform:translateX(-10px)}to{transform:translateX(14px)}}
+.rain line{animation:streak .6s linear infinite}
+@keyframes streak{from{transform:translate(6px,-18px)}to{transform:translate(-6px,18px)}}
+.shimmer path{animation:wave 1.6s ease-in-out infinite alternate}
+.rays{animation:spin 40s linear infinite;transform-origin:0 0}
+@media(min-width:1000px){
+ .wrap{max-width:1120px}
+ main.wrap{display:grid;grid-template-columns:340px minmax(0,1fr);gap:0 36px;align-items:start}
+ .controls{grid-column:1;grid-row:1}
+ .result{grid-column:1;grid-row:2}
+ .stage{grid-column:2;grid-row:1 / span 4;margin-top:0;position:sticky;top:12px}
+ .calc{grid-column:1;grid-row:3}
+ .more{grid-column:1;grid-row:4}
+ .sum{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .primary{flex:1 1 100%}
+}

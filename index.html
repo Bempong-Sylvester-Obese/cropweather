@@ -7,7 +7,7 @@
 <meta name="description" content="A visual crop weather model: pick a place and a season, press play and watch real Ghana weather grow, stress and ripen a maize field.">
 <meta name="theme-color" content="#f6f1e7">
 <link rel="icon" href="data:,">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=8">
 </head>
 <body>
 <a class="skip" href="#play">Skip to the simulation</a>
@@ -22,8 +22,8 @@
     <div class="field">
       <label for="loc">Location</label>
       <select id="loc">
-        <option value="tamale" selected>Tamale, Northern Region (one rainy season, planted 1 June)</option>
-        <option value="capecoast">Cape Coast, Central Region (major season, planted 1 April)</option>
+        <option value="tamale" selected>Tamale, north (one rainy season, sown 1 June)</option>
+        <option value="capecoast">Cape Coast, coast (major season, sown 1 April)</option>
       </select>
     </div>
     <fieldset class="field">
@@ -36,6 +36,7 @@
         <label><input type="radio" name="scen" value="late"><span>Late planting</span></label>
       </div>
       <p class="hint" id="scenHint"></p>
+      <div class="sum" id="sumStrip" aria-live="polite"></div>
     </fieldset>
     <div class="actions">
       <button type="button" id="play" class="primary">Play the season</button>
@@ -50,7 +51,7 @@
   <section class="stage" aria-labelledby="sceneTitle">
     <h2 id="sceneTitle" class="sr">Field scene</h2>
     <div class="scene-wrap">
-      <svg id="scene" viewBox="0 0 400 260" role="img" aria-labelledby="sceneDesc">
+      <svg id="scene" viewBox="0 0 400 280" role="img" aria-labelledby="sceneDesc">
         <desc id="sceneDesc">An animated maize field under the day's weather.</desc>
       </svg>
       <div class="daytag" aria-hidden="true"><strong id="dDay">Day 0</strong><span id="dDate"></span></div>
@@ -134,15 +135,16 @@
         <li>Water use and stress: Food and Agriculture Organization (FAO) Irrigation and Drainage Paper 56 (Allen and others, 1998).</li>
         <li>Harvest Index (HI) and stages: FAO AquaCrop reference manual (maize).</li>
         <li>Radiation Use Efficiency (RUE): Lindquist and others (2005), Agronomy Journal 97; APSIM and WOFOST model documentation.</li>
-        <li>Scenarios edit the real 2021 weather: drought halves rain and adds a 30 day dry spell near flowering; heat wave adds 6 &deg;C to daily highs for 3 weeks near flowering; El Ni&ntilde;o style is 25 percent drier and slightly warmer; late planting sows 30 days later.</li>
+        <li>Scenarios edit the real 2021 weather: drought removes drizzle under 3 mm, halves other rain and adds a 30 day rain-free spell over flowering; heat wave holds daily highs at 37 &deg;C or more for 22 days near flowering; the El Ni&ntilde;o style year has fewer rainy days, 30 percent less rain, a 2 week dry spell and is about 1 &deg;C warmer, because El Ni&ntilde;o years in Ghana tend to bring below-normal rainfall, fewer rainy days and longer dry spells (Owusu and Waylen, 2013; Owusu, Darkey and Boadi, 2019, Natural Resources Forum 43; Ghana Meteorological Agency (GMet) State of the Climate 2024); late planting sows 60 days later, so grain filling runs into the end of the rains.</li>
       </ul>
     </details>
   </section>
 </main>
 <footer class="wrap"><p>University of Cape Coast, October 2026. Works offline after the first visit.</p></footer>
-<script src="calc.js"></script>
-<script src="data/weather.js"></script>
-<script src="sim.js"></script>
-<script src="app.js"></script>
+<script src="calc.js?v=8"></script>
+<script src="data/weather.js?v=8"></script>
+<script src="sim.js?v=8"></script>
+<script src="scene.js?v=8"></script>
+<script src="app.js?v=8"></script>
 </body>
 </html>
