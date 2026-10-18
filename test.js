@@ -41,4 +41,18 @@ for(const l in LOCS){const res={};for(const sc of SC)res[sc]=S.simulate({years:w
  t(()=>a.ok(res.elnino.rain<res.normal.rain*0.7&&res.elnino.days.filter(d=>d.rain>=1).length<res.normal.days.filter(d=>d.rain>=1).length,l+' El Nino must be drier with fewer rainy days'));
  t(()=>a.notStrictEqual(res.late.days[0].doy,res.normal.days[0].doy));
  t(()=>a.ok(res.drought.yieldDryT<res.normal.yieldDryT&&res.heat.yieldDryT<res.normal.yieldDryT,l+' stress scenarios must yield less'))}
+// Season chart data
+const CH=require('./chart.js');
+{const L=LOCS.tamale,mk=sc=>S.simulate({years:window.WEATHER.tamale,year:2021,doy:L[1],crop:'maize',scenario:sc,lat:L[0]});
+ const nr=mk('normal'),dr=mk('drought'),ht=mk('heat');
+ const dN=CH.data(nr),dD=CH.data(dr,nr),dH=CH.data(ht,nr);
+ t(()=>a.notDeepStrictEqual(dD.rain,dN.rain));t(()=>a.notDeepStrictEqual(dH.tmax,dN.tmax));t(()=>a.notDeepStrictEqual(dD.tt,dH.tt));
+ t(()=>a.deepStrictEqual(dD.rain,dr.days.map(d=>d.rain)));
+ t(()=>{let c=0;dD.tt.forEach((v,i)=>{c+=dr.days[i].dtt;near(v,c,1e-9)})}); // DTT line = cumulative simulator DTT
+ t(()=>a.deepStrictEqual(dD.thresholds.map(x=>[x.name,x.value]),S.CROPS.maize.stages.slice(1).map(s=>[s[0],s[1]])));
+ t(()=>a.deepStrictEqual(dD.thresholds.map(x=>x.value),[70,270,980,1120,1790]));
+ t(()=>{a.ok(dD.normal);a.deepStrictEqual(dD.normal.tt,dN.tt);a.strictEqual(CH.data(dr).normal,undefined)});
+ const lay=CH.layout(600,false);
+ t(()=>{near(CH.xFor(0,100,lay),lay.L);near(CH.xFor(100,100,lay),600-lay.R);near(CH.xFor(50,100,lay),(lay.L+600-lay.R)/2)});
+ t(()=>{for(const d of [1,37,62,100])a.strictEqual(CH.dayAt(CH.xFor(d,105,lay),105,lay),d)});}
 console.log('All '+n+' tests passed');

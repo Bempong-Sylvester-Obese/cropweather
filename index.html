@@ -7,7 +7,7 @@
 <meta name="description" content="A visual crop weather model: pick a place and a season, press play and watch real Ghana weather grow, stress and ripen a maize field.">
 <meta name="theme-color" content="#f6f1e7">
 <link rel="icon" href="data:,">
-<link rel="stylesheet" href="style.css?v=8">
+<link rel="stylesheet" href="style.css?v=9">
 </head>
 <body>
 <a class="skip" href="#play">Skip to the simulation</a>
@@ -79,6 +79,25 @@
       <svg id="strip" viewBox="0 0 400 90" role="img" aria-label="Daily weather strip for the season so far"></svg>
       <figcaption><i class="k k-rain"></i>Rain each day <i class="k k-hot"></i>Days above 35 &deg;C <i class="k k-dry"></i>Days the crop was water stressed</figcaption>
     </figure>
+    <section class="chart" aria-labelledby="chartTitle">
+      <div class="chart-head">
+        <h2 id="chartTitle">Season chart</h2>
+        <label class="toggle"><input type="checkbox" id="cmpNormal"><span>Show the Normal season (dashed)</span></label>
+      </div>
+      <div class="scrub">
+        <label for="scrub">Day of the season: <output id="scrubOut" for="scrub">0</output></label>
+        <input type="range" id="scrub" min="0" max="105" value="0" step="1" aria-describedby="readout">
+      </div>
+      <figure class="panel">
+        <figcaption><i class="k k-tmax"></i>Maximum temperature (Tmax) <i class="k k-tmin"></i>Minimum temperature (Tmin), left axis in degrees Celsius (&deg;C) <i class="k k-rainb"></i>Rainfall, right axis in millimetres (mm)</figcaption>
+        <svg id="chartWx" role="img" aria-label="Daily maximum and minimum temperature with daily rainfall"></svg>
+      </figure>
+      <figure class="panel">
+        <figcaption><i class="k k-tt"></i>Accumulated Daily Thermal Time (DTT) in degree Celsius days (&deg;C days); dotted lines mark the growth stage thresholds</figcaption>
+        <svg id="chartTT" role="img" aria-label="Accumulated Daily Thermal Time with growth stage thresholds"></svg>
+      </figure>
+      <p class="readout" id="readout">Tap or hover on the chart, or move the day slider, to read a day's values.</p>
+    </section>
   </section>
 
   <section id="result" class="result" aria-live="polite" hidden>
@@ -141,10 +160,11 @@
   </section>
 </main>
 <footer class="wrap"><p>University of Cape Coast, October 2026. Works offline after the first visit.</p></footer>
-<script src="calc.js?v=8"></script>
-<script src="data/weather.js?v=8"></script>
-<script src="sim.js?v=8"></script>
-<script src="scene.js?v=8"></script>
-<script src="app.js?v=8"></script>
+<script src="calc.js?v=9"></script>
+<script src="data/weather.js?v=9"></script>
+<script src="sim.js?v=9"></script>
+<script src="scene.js?v=9"></script>
+<script src="chart.js?v=9"></script>
+<script src="app.js?v=9"></script>
 </body>
 </html>

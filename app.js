@@ -58,24 +58,36 @@ function result(res){var s=scen(),norm=s==='normal'?res:run('normal'),c=res.crop
   '<p class="note">Dry grain yield in tonnes per hectare (t/ha).</p><p class="delta">'+(s==='normal'?'Try Drought or Heat wave next.':(pct<0?'<strong>'+(-pct)+' percent less</strong> grain than the normal season.':pct>0?'<strong>'+pct+' percent more</strong> grain than the normal season.':'About the same as the normal season.'))+'</p>';
  $('result').hidden=false;}
 
+/* ---------- Season chart ---------- */
+var chart=new CWChart.Chart($('chartWx'),$('chartTT')),normalRes=null;
+function chartSet(){normalRes=scen()==='normal'?res:run('normal');chart.set(res,normalRes);$('scrub').max=res.days.length}
+function chartDraw(){chart.render(k);$('scrub').value=k;$('scrubOut').textContent=k}
+function readout(day){var d=res.days[day-1];if(!d){$('readout').textContent='Tap or hover on the chart, or move the day slider, to read a day\'s values.';return}
+ $('readout').innerHTML='<strong>Day '+d.day+'</strong> ('+dateStr(d.year,d.doy)+'): maximum '+f(d.tmax)+' \u00B0C, minimum '+f(d.tmin)+' \u00B0C, rain '+f(d.rain)+' mm, Daily Thermal Time (DTT) '+f(d.dtt)+', total '+f(d.tt,0)+' \u00B0C days, '+res.crop.stages[d.stage][0]+'.'}
+function pointer(e){var svg=e.currentTarget,r=svg.getBoundingClientRect(),vb=svg.viewBox.baseVal;if(!chart.lay)return;var x=(e.clientX-r.left)/r.width*vb.width;var day=Math.max(1,Math.min(res.days.length,CWChart.dayAt(x,chart.span,chart.lay)));readout(day)}
+['chartWx','chartTT'].forEach(function(id){$(id).addEventListener('pointermove',pointer);$(id).addEventListener('pointerdown',pointer)});
+$('cmpNormal').addEventListener('change',function(){chart.overlay=this.checked;chartDraw()});
+$('scrub').addEventListener('input',function(){stop();document.body.classList.remove('playing');k=+this.value;scorch=scorchUpTo(res,k);lastStage=-1;var d=res.days[k-1];drawScene(d,res);drawStrip(res,k);if(d){readouts(d,res);stageChange(d,res,true)}chartDraw();readout(k);if(k>=res.days.length)result(res);else $('result').hidden=true});
+var rz;addEventListener('resize',function(){clearTimeout(rz);rz=setTimeout(chartDraw,150)});
+
 /* ---------- Playback ---------- */
 var res=null,k=0,timer=null;
-function prepare(){res=run();scorch=0;curRef=Math.max(800,run('normal').biomass*0.9);k=0;lastStage=-1;$('result').hidden=true;ttBar(res);}
-function frame(){var d=res.days[k-1];scorch=scorchUpTo(res,k);drawScene(d,res);drawStrip(res,k);if(d){readouts(d,res);stageChange(d,res,false)}}
+function prepare(){res=run();scorch=0;curRef=Math.max(800,run('normal').biomass*0.9);k=0;lastStage=-1;$('result').hidden=true;ttBar(res);chartSet();}
+function frame(){var d=res.days[k-1];scorch=scorchUpTo(res,k);drawScene(d,res);drawStrip(res,k);chartDraw();if(d){readouts(d,res);stageChange(d,res,false)}}
 function stop(){clearInterval(timer);timer=null;$('pause').disabled=true;$('pause').textContent='Pause';$('play').textContent='Play the season'}
 function tick(){k++;frame();if(k>=res.days.length){stop();result(res);document.body.classList.remove('playing')}}
 function play(){if(RM.matches){finish();return}document.body.classList.add('playing');$('pause').disabled=false;$('play').textContent='Restart';timer=setInterval(tick,+$('speed').value)}
-function finish(){stop();if(!res)prepare();k=res.days.length;lastStage=-1;scorch=scorchUpTo(res,k);var d=res.days[k-1];drawScene(d,res);drawStrip(res,k);readouts(d,res);stageChange(d,res,true);result(res);document.body.classList.remove('playing')}
+function finish(){stop();if(!res)prepare();k=res.days.length;lastStage=-1;scorch=scorchUpTo(res,k);var d=res.days[k-1];drawScene(d,res);drawStrip(res,k);chartDraw();readouts(d,res);stageChange(d,res,true);result(res);document.body.classList.remove('playing')}
 $('play').addEventListener('click',function(){stop();prepare();play()});
 $('pause').addEventListener('click',function(){if(timer){clearInterval(timer);timer=null;this.textContent='Resume';document.body.classList.remove('playing')}else{this.textContent='Pause';document.body.classList.add('playing');timer=setInterval(tick,+$('speed').value)}});
 $('skip').addEventListener('click',function(){stop();prepare();finish()});
 $('speed').addEventListener('change',function(){if(timer){clearInterval(timer);timer=setInterval(tick,+this.value)}});
-function reset(){stop();prepare();drawScene(null,res);drawStrip(res,0);$('ttFill').style.width='0';$('ttTotal').textContent='0';$('status').textContent='Press play to start the season.';$('dDay').textContent='Day 0';$('dDate').textContent='';summary();
+function reset(){stop();prepare();drawScene(null,res);drawStrip(res,0);chartDraw();readout(0);$('ttFill').style.width='0';$('ttTotal').textContent='0';$('status').textContent='Press play to start the season.';$('dDay').textContent='Day 0';$('dDate').textContent='';summary();
  ['rWx','rSoil','rStress','rBio'].forEach(function(i){$(i).textContent='-'});$('mSoil').style.width='0';$('mStress').style.width='0';
  $('ttFormula').innerHTML='Today: Daily Thermal Time (DTT) = (maximum temperature + minimum temperature) / 2 &minus; base temperature of 10 &deg;C'}
 $('loc').addEventListener('change',reset);document.querySelectorAll('input[name=scen]').forEach(function(r){r.addEventListener('change',reset)});
 reset();
-window.__cw={seek:function(n){stop();k=Math.min(n,res.days.length);scorch=scorchUpTo(res,k);lastStage=-1;frame();return k},sceneHash:function(){var s=$('scene').innerHTML,h=0;for(var i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))|0;return h},state:function(){var d=res&&res.days[k-1];return {k:k,n:res.days.length,done:!$('result').hidden,stress:d?d.stress:0,ks:d?d.ks:1,yield:res.yieldDryT}}};
+window.__cw={chart:function(){return chart},res:function(){return res},seek:function(n){stop();k=Math.min(n,res.days.length);scorch=scorchUpTo(res,k);lastStage=-1;frame();return k},sceneHash:function(){var s=$('scene').innerHTML,h=0;for(var i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))|0;return h},state:function(){var d=res&&res.days[k-1];return {k:k,n:res.days.length,done:!$('result').hidden,stress:d?d.stress:0,ks:d?d.ks:1,yield:res.yieldDryT}}};
 function calc(){var a=parseFloat($('cTmax').value),b=parseFloat($('cTmin').value),c=parseFloat($('cTb').value);if([a,b,c].some(isNaN)){$('cOut').textContent='Enter all three temperatures.';return}var m=(a+b)/2,v=CW.dtt(a,b,c);
  $('cOut').innerHTML='('+a+' + '+b+') / 2 &minus; '+c+' = '+f(m-c)+(m-c<0?', which is negative, so DTT = <strong>0 degree days</strong>.':' &rarr; <strong>DTT = '+f(v)+' degree days</strong>')}
 ['cTmax','cTmin','cTb'].forEach(function(i){$(i).addEventListener('input',calc)});calc();
