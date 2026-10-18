@@ -179,3 +179,4 @@ footer{text-align:center}
 #maths>summary .sum-t::after{content:"+";position:absolute;left:calc(100% + 8px);top:50%;margin-top:-.65em;font-size:1.3rem;line-height:1;color:var(--soil);transition:transform .2s}
 #maths[open]>summary .sum-t::after{transform:rotate(45deg)}
 @media (prefers-reduced-motion:reduce){#maths>summary .sum-t::after{transition:none}}
+.calc-row>div{display:flex;flex-direction:column;justify-content:flex-end}.calc-row label{margin-bottom:6px}

@@ -1,4 +1,4 @@
-var C='cropweather-v12-centre',F=['./','index.html','style.css','app.js','calc.js','sim.js','scene.js','chart.js','maths.js','data/weather.js'];
+var C='cropweather-v13-calc',F=['./','index.html','style.css','app.js','calc.js','sim.js','scene.js','chart.js','maths.js','data/weather.js'];
 self.addEventListener('install',function(e){e.waitUntil(caches.open(C).then(function(c){return c.addAll(F.map(function(u){return new Request(u,{cache:'reload'})}))}));self.skipWaiting()});
 self.addEventListener('activate',function(e){e.waitUntil(caches.keys().then(function(k){return Promise.all(k.filter(function(x){return x!==C}).map(function(x){return caches.delete(x)}))}).then(function(){return self.clients.claim()}))});
 // Network first, bypassing the browser HTTP cache (GitHub Pages sends max-age=600), with the offline cache as fallback.
