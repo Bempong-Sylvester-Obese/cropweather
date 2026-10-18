@@ -26,12 +26,10 @@ select{font:inherit;color:inherit;width:100%;min-height:44px;padding:8px 32px 8p
 .seg input:checked+span{background:var(--soil);border-color:var(--soil);color:#fff}
 .seg input:focus-visible+span{outline:3px solid var(--maize-d);outline-offset:2px}
 .hint{font-size:.84rem;color:var(--ink-2);margin:6px 0 0;min-height:1.3em}
-.actions{display:flex;flex-wrap:wrap;gap:var(--s1);align-items:flex-end}
 button{font:inherit;font-weight:600;min-height:44px;padding:8px 16px;border:1px solid var(--soil);background:transparent;color:var(--soil-d);border-radius:4px;cursor:pointer;transition:background-color .15s,transform .08s}
 button:hover{background:var(--paper-2)}button:active{transform:translateY(1px)}button:disabled{opacity:.45;cursor:default}
 .primary{background:var(--leaf);border-color:var(--leaf);color:#fff;flex:1 1 100%}.primary:hover{background:var(--leaf-d)}
 @media(min-width:560px){.primary{flex:0 0 auto}}
-.speed{margin:0 0 0 auto;display:flex;flex-direction:column}.speed span{font-size:.82rem;margin-bottom:6px}.speed select{width:auto}
 /* Scene */
 .stage{margin-top:var(--s3)}
 .scene-wrap{position:relative;border:1px solid var(--rule);border-radius:6px;overflow:hidden;background:#e6eee8}
@@ -124,9 +122,6 @@ footer{border-top:1px solid var(--rule);padding:var(--s2) var(--s2) var(--s4);fo
 .chart-head h2{font-size:1.25rem;margin:0}
 .toggle{display:inline-flex;align-items:center;gap:8px;margin:0;font-weight:400;color:var(--ink);font-size:.86rem;min-height:44px;cursor:pointer}
 .toggle input{width:20px;height:20px;accent-color:var(--soil);margin:0}
-.scrub label{margin:4px 0 0}
-.scrub output{font-family:var(--serif);font-weight:600;color:var(--ink)}
-.scrub input{width:100%;min-height:36px;accent-color:var(--soil)}
 .panel{margin:var(--s1) 0 0}
 .panel figcaption{margin:0 0 4px;font-size:.78rem;line-height:1.45}
 .panel svg{display:block;width:100%;height:auto;background:#fffdf8;border:1px solid var(--rule);border-radius:4px;touch-action:pan-y;cursor:crosshair}
@@ -136,3 +131,23 @@ footer{border-top:1px solid var(--rule);padding:var(--s2) var(--s2) var(--s4);fo
 .readout strong{color:var(--ink)}
 @media(min-width:1000px){.chart{margin-top:var(--s3)}}
 .panel svg text{paint-order:stroke;stroke:#fffdf8;stroke-width:3px;stroke-linejoin:round}
+.transport{display:grid;gap:8px;margin:8px 0 0;padding:8px;border:1px solid var(--rule);border-radius:4px;background:#fffdf8}
+.t-row{margin:0;min-width:0}
+.t-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.t-btns button{min-height:44px;margin:0;width:100%;white-space:nowrap}
+.spd{border:0;padding:0;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.spd legend{float:left;padding:0;margin:0;font-size:.86rem;font-weight:600;color:var(--ink);white-space:nowrap}
+.seg-opts{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--soil);border-radius:4px;overflow:hidden;flex:0 1 240px}
+.seg-opts label{margin:0;position:relative}
+.seg-opts input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.seg-opts span{display:flex;align-items:center;justify-content:center;min-height:44px;padding:0 8px;font-size:.86rem;color:var(--soil);font-weight:600;white-space:nowrap}
+.seg-opts label+label span{border-left:1px solid var(--soil)}
+.seg-opts input:checked+span{background:var(--soil);color:#fffdf8}
+.seg-opts input:focus-visible+span{outline:3px solid var(--maize);outline-offset:-3px}
+.scrub label{margin:0;font-size:.86rem;white-space:nowrap}
+.scrub input{display:block;width:100%;min-height:44px;margin:0;accent-color:var(--soil)}
+.scrub output{font-family:var(--serif);font-weight:600;color:var(--ink)}
+.seg-lab{font-size:.86rem;font-weight:600;color:var(--ink);white-space:nowrap}
+.spd .seg-opts span{border:0;border-radius:0;background:transparent;box-shadow:none;width:100%}
+.spd .seg-opts label+label span{border-left:1px solid var(--soil)}
+.spd .seg-opts input:checked+span{background:var(--soil);color:#fffdf8}

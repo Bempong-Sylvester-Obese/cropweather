@@ -7,7 +7,7 @@
 <meta name="description" content="A visual crop weather model: pick a place and a season, press play and watch real Ghana weather grow, stress and ripen a maize field.">
 <meta name="theme-color" content="#f6f1e7">
 <link rel="icon" href="data:,">
-<link rel="stylesheet" href="style.css?v=9">
+<link rel="stylesheet" href="style.css?v=10">
 </head>
 <body>
 <a class="skip" href="#play">Skip to the simulation</a>
@@ -38,14 +38,6 @@
       <p class="hint" id="scenHint"></p>
       <div class="sum" id="sumStrip" aria-live="polite"></div>
     </fieldset>
-    <div class="actions">
-      <button type="button" id="play" class="primary">Play the season</button>
-      <button type="button" id="pause" disabled>Pause</button>
-      <button type="button" id="skip">Jump to harvest</button>
-      <label class="speed"><span>Speed</span>
-        <select id="speed" aria-label="Animation speed"><option value="220">Slow</option><option value="110" selected>Normal</option><option value="40">Fast</option></select>
-      </label>
-    </div>
   </form>
 
   <section class="stage" aria-labelledby="sceneTitle">
@@ -56,6 +48,24 @@
       </svg>
       <div class="daytag" aria-hidden="true"><strong id="dDay">Day 0</strong><span id="dDate"></span></div>
       <div class="toast" id="toast" aria-hidden="true"></div>
+    </div>
+    <div class="transport" role="group" aria-label="Season playback">
+      <div class="t-row t-btns">
+        <button type="button" id="play" class="primary" aria-pressed="false">Play</button>
+        <button type="button" id="skip">Jump to harvest</button>
+      </div>
+      <fieldset class="t-row spd" id="speed">
+        <legend class="sr">Playback speed</legend><span class="seg-lab" aria-hidden="true">Playback speed</span>
+        <div class="seg-opts">
+          <label><input type="radio" name="speed" value="220"><span>Slow</span></label>
+          <label><input type="radio" name="speed" value="110" checked><span>Normal</span></label>
+          <label><input type="radio" name="speed" value="40"><span>Fast</span></label>
+        </div>
+      </fieldset>
+      <div class="t-row scrub">
+        <label for="scrub">Day of the season: <output id="scrubOut" for="scrub">0</output></label>
+        <input type="range" id="scrub" min="0" max="105" value="0" step="1" aria-describedby="readout">
+      </div>
     </div>
     <p id="status" class="status" aria-live="polite">Press play to start the season.</p>
 
@@ -83,10 +93,6 @@
       <div class="chart-head">
         <h2 id="chartTitle">Season chart</h2>
         <label class="toggle"><input type="checkbox" id="cmpNormal"><span>Show the Normal season (dashed)</span></label>
-      </div>
-      <div class="scrub">
-        <label for="scrub">Day of the season: <output id="scrubOut" for="scrub">0</output></label>
-        <input type="range" id="scrub" min="0" max="105" value="0" step="1" aria-describedby="readout">
       </div>
       <figure class="panel">
         <figcaption><i class="k k-tmax"></i>Maximum temperature (Tmax) <i class="k k-tmin"></i>Minimum temperature (Tmin), left axis in degrees Celsius (&deg;C) <i class="k k-rainb"></i>Rainfall, right axis in millimetres (mm)</figcaption>
@@ -160,11 +166,11 @@
   </section>
 </main>
 <footer class="wrap"><p>University of Cape Coast, October 2026. Works offline after the first visit.</p></footer>
-<script src="calc.js?v=9"></script>
-<script src="data/weather.js?v=9"></script>
-<script src="sim.js?v=9"></script>
-<script src="scene.js?v=9"></script>
-<script src="chart.js?v=9"></script>
-<script src="app.js?v=9"></script>
+<script src="calc.js?v=10"></script>
+<script src="data/weather.js?v=10"></script>
+<script src="sim.js?v=10"></script>
+<script src="scene.js?v=10"></script>
+<script src="chart.js?v=10"></script>
+<script src="app.js?v=10"></script>
 </body>
 </html>

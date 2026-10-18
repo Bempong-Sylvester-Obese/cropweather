@@ -61,7 +61,7 @@ function result(res){var s=scen(),norm=s==='normal'?res:run('normal'),c=res.crop
 /* ---------- Season chart ---------- */
 var chart=new CWChart.Chart($('chartWx'),$('chartTT')),normalRes=null;
 function chartSet(){normalRes=scen()==='normal'?res:run('normal');chart.set(res,normalRes);$('scrub').max=res.days.length}
-function chartDraw(){chart.render(k);$('scrub').value=k;$('scrubOut').textContent=k}
+function chartDraw(){chart.render(k);$('scrub').value=k;$('scrubOut').textContent=k;readout(k)}
 function readout(day){var d=res.days[day-1];if(!d){$('readout').textContent='Tap or hover on the chart, or move the day slider, to read a day\'s values.';return}
  $('readout').innerHTML='<strong>Day '+d.day+'</strong> ('+dateStr(d.year,d.doy)+'): maximum '+f(d.tmax)+' \u00B0C, minimum '+f(d.tmin)+' \u00B0C, rain '+f(d.rain)+' mm, Daily Thermal Time (DTT) '+f(d.dtt)+', total '+f(d.tt,0)+' \u00B0C days, '+res.crop.stages[d.stage][0]+'.'}
 function pointer(e){var svg=e.currentTarget,r=svg.getBoundingClientRect(),vb=svg.viewBox.baseVal;if(!chart.lay)return;var x=(e.clientX-r.left)/r.width*vb.width;var day=Math.max(1,Math.min(res.days.length,CWChart.dayAt(x,chart.span,chart.lay)));readout(day)}
@@ -74,14 +74,14 @@ var rz;addEventListener('resize',function(){clearTimeout(rz);rz=setTimeout(chart
 var res=null,k=0,timer=null;
 function prepare(){res=run();scorch=0;curRef=Math.max(800,run('normal').biomass*0.9);k=0;lastStage=-1;$('result').hidden=true;ttBar(res);chartSet();}
 function frame(){var d=res.days[k-1];scorch=scorchUpTo(res,k);drawScene(d,res);drawStrip(res,k);chartDraw();if(d){readouts(d,res);stageChange(d,res,false)}}
-function stop(){clearInterval(timer);timer=null;$('pause').disabled=true;$('pause').textContent='Pause';$('play').textContent='Play the season'}
+function stop(){clearInterval(timer);timer=null;document.body.classList.remove('playing');$('play').textContent='Play';$('play').setAttribute('aria-pressed','false')}
+function speed(){return +document.querySelector('input[name=speed]:checked').value}
 function tick(){k++;frame();if(k>=res.days.length){stop();result(res);document.body.classList.remove('playing')}}
-function play(){if(RM.matches){finish();return}document.body.classList.add('playing');$('pause').disabled=false;$('play').textContent='Restart';timer=setInterval(tick,+$('speed').value)}
+function play(){if(RM.matches){finish();return}document.body.classList.add('playing');$('play').textContent='Pause';$('play').setAttribute('aria-pressed','true');timer=setInterval(tick,speed())}
 function finish(){stop();if(!res)prepare();k=res.days.length;lastStage=-1;scorch=scorchUpTo(res,k);var d=res.days[k-1];drawScene(d,res);drawStrip(res,k);chartDraw();readouts(d,res);stageChange(d,res,true);result(res);document.body.classList.remove('playing')}
-$('play').addEventListener('click',function(){stop();prepare();play()});
-$('pause').addEventListener('click',function(){if(timer){clearInterval(timer);timer=null;this.textContent='Resume';document.body.classList.remove('playing')}else{this.textContent='Pause';document.body.classList.add('playing');timer=setInterval(tick,+$('speed').value)}});
+$('play').addEventListener('click',function(){if(timer){stop();return}if(!res||k===0||k>=res.days.length){stop();prepare()}play()});
 $('skip').addEventListener('click',function(){stop();prepare();finish()});
-$('speed').addEventListener('change',function(){if(timer){clearInterval(timer);timer=setInterval(tick,+this.value)}});
+document.querySelectorAll('input[name=speed]').forEach(function(r){r.addEventListener('change',function(){if(timer){clearInterval(timer);timer=setInterval(tick,speed())}})});
 function reset(){stop();prepare();drawScene(null,res);drawStrip(res,0);chartDraw();readout(0);$('ttFill').style.width='0';$('ttTotal').textContent='0';$('status').textContent='Press play to start the season.';$('dDay').textContent='Day 0';$('dDate').textContent='';summary();
  ['rWx','rSoil','rStress','rBio'].forEach(function(i){$(i).textContent='-'});$('mSoil').style.width='0';$('mStress').style.width='0';
  $('ttFormula').innerHTML='Today: Daily Thermal Time (DTT) = (maximum temperature + minimum temperature) / 2 &minus; base temperature of 10 &deg;C'}
