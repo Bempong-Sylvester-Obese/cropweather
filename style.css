@@ -168,3 +168,14 @@ footer{border-top:1px solid var(--rule);padding:var(--s2) var(--s2) var(--s4);fo
 @media(min-width:1000px){.maths-sec{margin-top:0}.mx-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 40px}}
 #mHarm .seg-opts{grid-template-columns:repeat(2,1fr);flex:0 1 120px}
 @media(max-width:600px){.mx .eq{font-size:.86rem}}
+.maths-sec{margin-left:auto;margin-right:auto;margin-bottom:var(--s2)}
+#maths>summary{display:flex;justify-content:center;align-items:center;gap:8px;padding:8px 0;min-height:44px;text-align:center}
+#maths>summary::after{position:static;line-height:1}
+#maths>summary .sum-t{display:inline-block}
+#maths[open]>.note,#maths[open]>.mx-grid{max-width:1040px;margin-left:auto;margin-right:auto;text-align:left}
+footer{text-align:center}
+#maths>summary{padding:8px 0}#maths>summary::after{content:none}
+#maths>summary .sum-t{position:relative}
+#maths>summary .sum-t::after{content:"+";position:absolute;left:calc(100% + 8px);top:50%;margin-top:-.65em;font-size:1.3rem;line-height:1;color:var(--soil);transition:transform .2s}
+#maths[open]>summary .sum-t::after{transform:rotate(45deg)}
+@media (prefers-reduced-motion:reduce){#maths>summary .sum-t::after{transition:none}}
