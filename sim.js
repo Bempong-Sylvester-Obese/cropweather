@@ -73,6 +73,7 @@
       tt += dtt;
       var st = stageIndex(tt, c), emerged = tt >= c.stages[1][1];
       if (emerged) rootZ = Math.min(c.rootMax, rootZ + 0.012);
+      var swPrev = days.length ? days[days.length-1].sw : taw0 * 0.3 - dr;
       var taw = taw0 * rootZ, raw = 0.55 * taw;
       var e0 = et0Hargreaves(x.tx, x.tn, ra(lat, x.doy)), kc = kcAt(tt, c), k = ks(dr, taw, raw);
       var etc = kc * e0 * k, eff = x.p > 5 ? x.p * 0.85 : x.p * 0.5;
@@ -90,7 +91,7 @@
         if (x.tx > 35) hiF -= (x.tx - 35) * 0.012;
         hiF = Math.max(0.1, hiF);
       }
-      days.push({ day: d + 1, year: x.year, doy: x.doy, tmax: x.tx, tmin: x.tn, rain: x.p, srad: x.s, dtt: dtt, tt: tt, stage: st, lai: lai, par: par, ipar: ipar, growth: growth, biomass: bio, et0: e0, kc: kc, etc: etc, ks: k, heat: heat, stress: 1 - Math.min(k, heat), soilPct: 100 * (1 - dr / taw), drain: drain, hiF: hiF });
+      days.push({ day: d + 1, year: x.year, doy: x.doy, tmax: x.tx, tmin: x.tn, rain: x.p, srad: x.s, dtt: dtt, tt: tt, stage: st, lai: lai, par: par, ipar: ipar, growth: growth, biomass: bio, et0: e0, kc: kc, etc: etc, ks: k, heat: heat, stress: 1 - Math.min(k, heat), soilPct: 100 * (1 - dr / taw), drain: drain, hiF: hiF, effRain: eff, sw: taw - dr, swOther: (taw - dr) - (swPrev + eff - etc - drain) });
       if (c.harvestDays ? d + 1 >= c.harvestDays : tt >= mat) done = true;
     }
     var yieldDry = bio * c.hi * hiF;

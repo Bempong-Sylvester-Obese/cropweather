@@ -151,3 +151,20 @@ footer{border-top:1px solid var(--rule);padding:var(--s2) var(--s2) var(--s4);fo
 .spd .seg-opts span{border:0;border-radius:0;background:transparent;box-shadow:none;width:100%}
 .spd .seg-opts label+label span{border-left:1px solid var(--soil)}
 .spd .seg-opts input:checked+span{background:var(--soil);color:#fffdf8}
+#maths>summary{font-family:var(--serif);font-weight:600}
+.mx{border-top:1px solid var(--rule);padding:16px 0 8px}
+.mx h3{font-size:1.05rem;margin:0 0 8px}
+.mx p{margin:0 0 8px;font-size:.92rem}
+.mx .eq{overflow-x:auto;padding:8px 0;margin:0 0 8px;font-size:1rem}
+.mx .eq.small{font-size:.9rem}
+.mx math{font-family:'STIX Two Math','Cambria Math','Latin Modern Math','Noto Serif','Times New Roman',serif}
+.mx svg{display:block;width:100%;height:auto;background:#fffdf8;border:1px solid var(--rule);border-radius:4px;margin:8px 0}
+.mx svg text{font-family:var(--sans);paint-order:stroke;stroke:#fffdf8;stroke-width:3px;stroke-linejoin:round}
+.mx-ctl{display:grid;gap:4px;margin:8px 0}
+.mx-ctl label{margin:0;font-size:.86rem}
+.mx-ctl input[type=range]{width:100%;min-height:44px;margin:0;accent-color:var(--soil)}
+.mx-out{font-size:.86rem!important;color:var(--ink-2)}
+.mx-ctl.spd{display:flex;max-width:280px}
+@media(min-width:1000px){.maths-sec{margin-top:0}.mx-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 40px}}
+#mHarm .seg-opts{grid-template-columns:repeat(2,1fr);flex:0 1 120px}
+@media(max-width:600px){.mx .eq{font-size:.86rem}}

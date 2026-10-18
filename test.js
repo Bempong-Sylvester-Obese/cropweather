@@ -55,4 +55,22 @@ const CH=require('./chart.js');
  const lay=CH.layout(600,false);
  t(()=>{near(CH.xFor(0,100,lay),lay.L);near(CH.xFor(100,100,lay),600-lay.R);near(CH.xFor(50,100,lay),(lay.L+600-lay.R)/2)});
  t(()=>{for(const d of [1,37,62,100])a.strictEqual(CH.dayAt(CH.xFor(d,105,lay),105,lay),d)});}
+// Mathematics section
+const MX=require('./maths.js');
+t(()=>{for(const [a,b] of [[32,22],[38.5,24.1],[29,18]])near(MX.sineMean(a,b),(a+b)/2,1e-9)});
+t(()=>{near(MX.sineT(15,32,22),32,1e-9);near(MX.sineT(3,32,22),22,1e-9)});
+t(()=>near(MX.sineDTT(32,22,null),17,1e-9)); // matches handout example
+t(()=>{a.ok(MX.sineDTT(38,25,30)<MX.sineDTT(38,25,null));near(MX.sineDTT(28,20,30),MX.sineDTT(28,20,null),1e-12)});
+{const tt=[],yy=[];for(let i=0;i<730;i++){tt.push(i);yy.push(27+2*Math.cos(2*Math.PI*i/365.25)-1.5*Math.sin(2*Math.PI*i/365.25)+0.6*Math.cos(4*Math.PI*i/365.25))}
+ const f2=MX.fourierFit(tt,yy,2);t(()=>{near(f2.c[0],27,1e-6);near(f2.c[1],2,1e-6);near(f2.c[2],-1.5,1e-6);near(f2.c[3],0.6,1e-6);near(f2.c[4],0,1e-6);near(f2.r2,1,1e-9)});
+ const f1=MX.fourierFit(tt,yy,1);t(()=>{a.ok(f1.r2<1&&f1.r2>0.8);near(f1.c[1],2,0.05)});}
+for(const loc of ['tamale','capecoast']){const Y=MX.yearlyMeans(window.WEATHER[loc]);t(()=>{a.strictEqual(Y.t.length,1827);const r1=MX.fourierFit(Y.t,Y.y,1).r2,r2=MX.fourierFit(Y.t,Y.y,2).r2;a.ok(r1>0.2&&r2>=r1&&r2<1,loc+' '+r1+' '+r2)});}
+{const L=LOCS.tamale,mk=sc=>S.simulate({years:window.WEATHER.tamale,year:2021,doy:L[1],crop:'maize',scenario:sc,lat:L[0]});
+ const nr=mk('normal'),ht=mk('heat'),dr=mk('drought'),y0=nr.yieldDryT;
+ t(()=>{const u=MX.cumDTT(ht.days,null),c=MX.cumDTT(ht.days,30);a.ok(c.at(-1)<u.at(-1)-50,'heat cap '+u.at(-1)+' '+c.at(-1));near(u.at(-1),ht.days.at(-1).tt,1e-6)});
+ t(()=>{const hc=MX.cumDTT(ht.days,30).at(-1)/ht.days.at(-1).tt,nc=MX.cumDTT(nr.days,30).at(-1)/nr.days.at(-1).tt;a.ok(hc<nc,'cap bites harder in heat wave')});
+ t(()=>{MX.cumDTT(nr.days,30);near(mk('normal').yieldDryT,y0,1e-12)}); // cap never touches main yields
+ for(const r of [nr,ht,dr])t(()=>{const e=MX.euler(r);r.days.forEach((d,i)=>{near(e.S[i],d.sw,1e-9);near(e.B[i],d.biomass,1e-9)})});
+ t(()=>{const en=MX.euler(nr),ed=MX.euler(dr);a.notDeepStrictEqual(en.S,ed.S);a.notDeepStrictEqual(en.B,ed.B);a.ok(Math.min(...ed.S.slice(45,75))<Math.min(...en.S.slice(45,75)))});}
+t(()=>{near(MX.beer(0.65,0),0);near(MX.beer(0.65,3),1-Math.exp(-1.95),1e-12);near(MX.beer(0.65,3),0.8577,1e-4);a.ok(MX.beer(0.65,6)<1&&MX.beer(0.9,3)>MX.beer(0.5,3))});
 console.log('All '+n+' tests passed');
